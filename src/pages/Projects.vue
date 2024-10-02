@@ -4,6 +4,7 @@ import { store } from "../store/store";
 // importo axios per effettuare la richiesta
 import axios from "axios";
 export default {
+  name: "Projects",
   data() {
     return {
       // creo l'array dove inserirò tutti i dati che arrivano dalla richiesta dell'API
@@ -31,7 +32,12 @@ export default {
   <h1>Progetti</h1>
   <ul>
     <!-- eseguo un ciclo v-for per stampare tutti i progetti in pagina -->
-    <li v-for="project in projects" :key="project.id">{{ project.name }}</li>
+    <li v-for="project in projects" :key="project.id">
+      <!-- {{ project.name + " - " + "link to github:" + project.github }} -->
+      {{
+        `Il nome del progetto è: ${project.name} - Link a github: ${project.github}`
+      }}
+    </li>
   </ul>
 </template>
 

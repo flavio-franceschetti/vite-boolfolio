@@ -1,9 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../pages/Home.vue";
 import Projects from "../pages/Projects.vue";
+import About from "../pages/About.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  //linkExactActiveClass permette di definire una classe CSS personalizzata che verrà applicata solo ai link che corrispondono esattamente alla route attiva.
+  linkExactActiveClass: "active",
   routes: [
     {
       path: "/",
@@ -14,6 +17,11 @@ const router = createRouter({
       path: "/progetti",
       name: "projects",
       component: Projects,
+    },
+    {
+      path: "/about-me",
+      name: "about-me",
+      component: About,
     },
   ],
 });

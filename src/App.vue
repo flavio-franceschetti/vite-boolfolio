@@ -1,23 +1,23 @@
 <script>
-export default {};
+import Navbar from "./components/partials/NavBar.vue";
+export default {
+  components: {
+    Navbar,
+  },
+};
 </script>
 
 <template>
-  <nav>
-    <ul>
-      <li>
-        <!-- con router-link creo i link alle pagine prendendo il nome specificato nel router -->
-        <router-link :to="{ name: 'home' }">Home</router-link>
-      </li>
-      <li>
-        <router-link :to="{ name: 'projects' }">Progetti</router-link>
-      </li>
-    </ul>
-  </nav>
-  <div>
+  <Navbar />
+  <div class="container">
     <!-- utilizzo router view per visualizzare le pagine collegate nel router -->
     <router-view></router-view>
   </div>
 </template>
 
-<style></style>
+<style lang="scss" scoped>
+.container {
+  width: 90%;
+  margin: 0 auto;
+}
+</style>
