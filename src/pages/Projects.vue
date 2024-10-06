@@ -9,18 +9,31 @@ export default {
     return {
       // creo l'array dove inserirò tutti i dati che arrivano dalla richiesta dell'API
       projects: [],
+      paginatorData: {
+        current_page: 1,
+        links: [],
+      },
+      projectNum: 0,
       inLoading: true,
     };
   },
   methods: {
     // creo la richiesta alla mia API con axios
-    getApi() {
+    getApi(apiUrl) {
+      // ogni volta che chiamo l'api il loading diventa true quindi anche quando cambio pagina ci sarà il loading
+      this.inLoading = true;
       axios
-        .get(store.apiUrl + "projects")
+        .get(apiUrl)
         .then((response) => {
           // recupero i dati della richiesta e li inserisco dentro l'array projects
-          this.projects = response.data.projects;
-          // console.log(response.data.projects);
+          this.projects = response.data.projects.data;
+          // recupero il numero totale dei progetti presenti
+          this.projectNum = response.data.projects.total;
+          //recupero i dati per il paginator
+          this.paginatorData.current_page = response.data.projects.current_page;
+          this.paginatorData.links = response.data.projects.links;
+          console.log(response.data.projects.links);
+          // data per il loading
           this.inLoading = false;
         })
         .catch((error) => {
@@ -28,19 +41,21 @@ export default {
         });
     },
   },
-  // nel mounthed utilizzo il metodo getApi
+  // nel mounthed utilizzo il metodo getApi a cui passo l'url per la prima pagina dei progetti
   mounted() {
-    this.getApi();
+    this.getApi(store.apiUrl + "projects");
   },
 };
 </script>
 
 <template>
-  <h1>Progetti :</h1>
   <div v-if="!inLoading">
+    <h1 v-if="projectNum > 0">Ci sono {{ projectNum }} progetti :</h1>
+    <h1 v-else>"Non ci sono progetti disponibili !!!</h1>
     <ul>
       <!-- eseguo un ciclo v-for per stampare tutti i progetti in pagina -->
       <li class="project" v-for="project in projects" :key="project.id">
+        <div>Progetto n. {{ project.id }}</div>
         <!-- nome del progetto -->
         <div>Nome del progetto: {{ project.name }}</div>
         <!-- info sul progetto  -->
@@ -72,6 +87,18 @@ export default {
         <!-- ************************* -->
       </li>
     </ul>
+
+    <!-- PAGINATOR -->
+    <div class="paginator">
+      <!-- con v-html transformo tutte le entità html del testo nei sinboli -->
+      <button
+        @click="getApi(link.url)"
+        v-for="(link, index) in paginatorData.links"
+        :key="index"
+        v-html="link.label"
+        :disabled="link.active || !link.url"
+      ></button>
+    </div>
   </div>
   <div class="loading" v-else>
     <img src="../../public/loading.gif" alt="loading" />
