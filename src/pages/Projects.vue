@@ -9,6 +9,7 @@ export default {
     return {
       // creo l'array dove inserirò tutti i dati che arrivano dalla richiesta dell'API
       projects: [],
+      inLoading: true,
     };
   },
   methods: {
@@ -16,8 +17,9 @@ export default {
     getApi() {
       axios.get(store.apiUrl + "projects").then((response) => {
         // recupero i dati della richiesta e li inserisco dentro l'array projects
-        this.projects = response.data.result;
-        // console.log(response.data.result);
+        this.projects = response.data.projects;
+        // console.log(response.data.projects);
+        this.inLoading = false;
       });
     },
   },
@@ -29,16 +31,72 @@ export default {
 </script>
 
 <template>
-  <h1>Progetti</h1>
-  <ul>
-    <!-- eseguo un ciclo v-for per stampare tutti i progetti in pagina -->
-    <li v-for="project in projects" :key="project.id">
-      <!-- {{ project.name + " - " + "link to github:" + project.github }} -->
-      {{
-        `Il nome del progetto è: ${project.name} - Link a github: ${project.github}`
-      }}
-    </li>
-  </ul>
+  <h1>Progetti :</h1>
+  <div v-if="!inLoading">
+    <ul>
+      <!-- eseguo un ciclo v-for per stampare tutti i progetti in pagina -->
+      <li class="project" v-for="project in projects" :key="project.id">
+        <!-- nome del progetto -->
+        <div>Nome del progetto: {{ project.name }}</div>
+        <!-- info sul progetto  -->
+        <div>
+          {{
+            `Status: ${project.status ? "Done" : "In progress"} | 
+            Type: ${project.type ? project.type.name : "no type"}`
+          }}
+        </div>
+        <!-- controllo sulle tecnologie utilizzate -->
+        <div>
+          Tecnologie utilizzate:
+          <div v-if="project.technologies.length > 0">
+            <ul>
+              <li
+                v-for="technology in project.technologies"
+                :key="technology.id"
+              >
+                {{ technology.name }}
+              </li>
+            </ul>
+          </div>
+          <div v-else>
+            <ul>
+              <li>Nessuna tecnologia specificata</li>
+            </ul>
+          </div>
+        </div>
+        <!-- ************************* -->
+      </li>
+    </ul>
+  </div>
+  <div class="loading" v-else>
+    <img src="../../public/loading.gif" alt="loading" />
+    <span>loading...</span>
+  </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+h1 {
+  font-size: 35px;
+}
+
+ul {
+  list-style: none;
+}
+
+.project {
+  font-size: 20px;
+  margin: 30px 0;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 20px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  span {
+    align-self: flex-end;
+  }
+}
+</style>

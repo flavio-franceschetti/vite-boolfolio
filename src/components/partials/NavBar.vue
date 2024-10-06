@@ -11,9 +11,11 @@ export default {
         <!-- con router-link creo i link alle pagine prendendo il nome specificato nel router -->
         <router-link :to="{ name: 'home' }">Home</router-link>
       </li>
+      |
       <li>
         <router-link :to="{ name: 'about-me' }">About</router-link>
       </li>
+      |
       <li>
         <router-link :to="{ name: 'projects' }">Progetti</router-link>
       </li>
