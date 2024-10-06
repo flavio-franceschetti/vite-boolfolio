@@ -15,12 +15,17 @@ export default {
   methods: {
     // creo la richiesta alla mia API con axios
     getApi() {
-      axios.get(store.apiUrl + "projects").then((response) => {
-        // recupero i dati della richiesta e li inserisco dentro l'array projects
-        this.projects = response.data.projects;
-        // console.log(response.data.projects);
-        this.inLoading = false;
-      });
+      axios
+        .get(store.apiUrl + "projects")
+        .then((response) => {
+          // recupero i dati della richiesta e li inserisco dentro l'array projects
+          this.projects = response.data.projects;
+          // console.log(response.data.projects);
+          this.inLoading = false;
+        })
+        .catch((error) => {
+          console.log(error.message);
+        });
     },
   },
   // nel mounthed utilizzo il metodo getApi
