@@ -40,6 +40,16 @@ export default {
           console.log(error.message);
         });
     },
+    // funzione per modificare i nomi dei bottoni
+    customLabel(label) {
+      if (label == "&laquo; Previous") {
+        return (label = "&larr;");
+      } else if (label == "Next &raquo;") {
+        return (label = "&rarr;");
+      } else {
+        return label;
+      }
+    },
   },
   // nel mounthed utilizzo il metodo getApi a cui passo l'url per la prima pagina dei progetti
   mounted() {
@@ -49,7 +59,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="!inLoading">
+  <div class="container" v-if="!inLoading">
     <h1 v-if="projectNum > 0">Ci sono {{ projectNum }} progetti :</h1>
     <h1 v-else>"Non ci sono progetti disponibili !!!</h1>
     <ul>
@@ -95,7 +105,7 @@ export default {
         @click="getApi(link.url)"
         v-for="(link, index) in paginatorData.links"
         :key="index"
-        v-html="link.label"
+        v-html="customLabel(link.label)"
         :disabled="link.active || !link.url"
       ></button>
     </div>
@@ -107,6 +117,10 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.container {
+  padding: 40px 0;
+}
+
 h1 {
   font-size: 35px;
 }
@@ -121,7 +135,7 @@ ul {
   background-color: #fff;
   padding: 15px;
   border-radius: 20px;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px;
+  box-shadow: rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 
 .loading {
@@ -129,6 +143,32 @@ ul {
   align-items: center;
   span {
     align-self: flex-end;
+  }
+}
+
+.paginator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  button {
+    cursor: pointer;
+    background-color: #fff;
+    border: none;
+    padding: 5px;
+    border-radius: 60% 40% 65% 45% / 55% 65% 35% 50%; // Irregolarità del cerchio
+    height: 40px;
+    width: 40px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease,
+      border-radius 0.3s ease;
+
+    &:hover {
+      transform: scale(1.1);
+      border-radius: 50% 60% 55% 45% / 65% 55% 50% 60%; // Cambia la forma
+      box-shadow: rgba(0, 0, 0, 0.2) 0px 10px 30px;
+    }
   }
 }
 </style>
