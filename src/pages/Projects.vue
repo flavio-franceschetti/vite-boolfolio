@@ -66,7 +66,7 @@ export default {
           console.log(error.message);
         });
     },
-    // funzione per modificare i nomi dei bottoni
+    // funzione per modificare i nomi dei bottoni di default
     customLabel(label) {
       if (label == "&laquo; Previous") {
         return (label = "&larr;");
@@ -75,6 +75,14 @@ export default {
       } else {
         return label;
       }
+    },
+
+    // funzione per controllo sulle tecnologie
+    getTechnologies(project) {
+      if (project.technologies.length) {
+        return project.technologies.map((tech) => tech.name).join(", ");
+      }
+      return "Nessuna tecnologia utilizzata";
     },
   },
   // nel mounthed utilizzo il metodo getApi a cui passo l'url per la prima pagina dei progetti
@@ -125,24 +133,7 @@ export default {
           }}
         </div>
         <!-- controllo sulle tecnologie utilizzate -->
-        <div>
-          Tecnologie utilizzate:
-          <div v-if="project.technologies.length > 0">
-            <ul>
-              <li
-                v-for="technology in project.technologies"
-                :key="technology.id"
-              >
-                {{ technology.name }}
-              </li>
-            </ul>
-          </div>
-          <div v-else>
-            <ul>
-              <li>Nessuna tecnologia specificata</li>
-            </ul>
-          </div>
-        </div>
+        <div>Tecnologie utilizzate: {{ getTechnologies(project) }}</div>
         <!-- ************************* -->
       </div>
     </div>
