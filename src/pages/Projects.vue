@@ -1,6 +1,8 @@
 <script>
 // importo store per recuperare l'apiUrl
 import { store } from "../store/store";
+import { DateTime } from "luxon";
+
 // importo axios per effettuare la richiesta
 import axios from "axios";
 export default {
@@ -40,8 +42,16 @@ export default {
               this.paginatorData.links = response.data.projects.links;
               // data per il loading
               this.inLoading = false;
+              // con un map ciclo tutti i progetti e nella funzione che gli passo formatto tutte le date di creazione in modo tale da avere l'array aggiornato con le date formattate usando luxon e ritorno il progetto
+              this.projects = this.projects.map((project) => {
+                if (project.created_at) {
+                  project.created_at = DateTime.fromISO(project.created_at)
+                    .setLocale("it")
+                    .toFormat("dd LL yyyy");
+                  return project;
+                }
+              });
               console.log(this.projects);
-
               break;
             case "types":
               this.types = response.data.types;
@@ -104,6 +114,7 @@ export default {
           Progetto n. {{ project.id }}
           <span class="project-by">by: {{ project.user.name }}</span>
         </div>
+        <div class="date">Data di creazione: {{ project.created_at }}</div>
         <!-- nome del progetto -->
         <div>Nome del progetto: {{ project.name }}</div>
         <!-- info sul progetto  -->
@@ -179,6 +190,10 @@ ul {
 .project-by {
   font-size: 14px;
   margin-left: 80%;
+}
+
+.date {
+  font-size: 14px;
 }
 
 .loading {
