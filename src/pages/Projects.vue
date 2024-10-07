@@ -40,6 +40,8 @@ export default {
               this.paginatorData.links = response.data.projects.links;
               // data per il loading
               this.inLoading = false;
+              console.log(this.projects);
+
               break;
             case "types":
               this.types = response.data.types;
@@ -98,7 +100,10 @@ export default {
     <div>
       <!-- eseguo un ciclo v-for per stampare tutti i progetti in pagina -->
       <div class="card" v-for="project in projects" :key="project.id">
-        <div>Progetto n. {{ project.id }}</div>
+        <div>
+          Progetto n. {{ project.id }}
+          <span class="project-by">by: {{ project.user.name }}</span>
+        </div>
         <!-- nome del progetto -->
         <div>Nome del progetto: {{ project.name }}</div>
         <!-- info sul progetto  -->
@@ -169,6 +174,11 @@ ul {
   padding: 15px;
   border-radius: 20px;
   box-shadow: rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+}
+
+.project-by {
+  font-size: 14px;
+  margin-left: 80%;
 }
 
 .loading {
