@@ -9,6 +9,8 @@ export default {
     return {
       // creo l'array dove inserirò tutti i dati che arrivano dalla richiesta dell'API
       projects: [],
+      types: [],
+      technologies: [],
       paginatorData: {
         current_page: 1,
         links: [],
@@ -19,22 +21,34 @@ export default {
   },
   methods: {
     // creo la richiesta alla mia API con axios
-    getApi(apiUrl) {
+    getApi(apiUrl, type = "projects") {
       // ogni volta che chiamo l'api il loading diventa true quindi anche quando cambio pagina ci sarà il loading
       this.inLoading = true;
       axios
         .get(apiUrl)
         .then((response) => {
-          // recupero i dati della richiesta e li inserisco dentro l'array projects
-          this.projects = response.data.projects.data;
-          // recupero il numero totale dei progetti presenti
-          this.projectNum = response.data.projects.total;
-          //recupero i dati per il paginator
-          this.paginatorData.current_page = response.data.projects.current_page;
-          this.paginatorData.links = response.data.projects.links;
-          console.log(response.data.projects.links);
-          // data per il loading
-          this.inLoading = false;
+          // con switch case in base al valore della variabile passata eseguiamo il codice scritto per ogni caso
+          switch (type) {
+            case "projects":
+              // recupero i dati della richiesta e li inserisco dentro l'array projects
+              this.projects = response.data.projects.data;
+              // recupero il numero totale dei progetti presenti
+              this.projectNum = response.data.projects.total;
+              //recupero i dati per il paginator
+              this.paginatorData.current_page =
+                response.data.projects.current_page;
+              this.paginatorData.links = response.data.projects.links;
+              // data per il loading
+              this.inLoading = false;
+              break;
+            case "types":
+              this.types = response.data.types;
+              break;
+            case "technologies":
+              this.technologies = response.data.technologies;
+              // console.log(response.data.technologies);
+              break;
+          }
         })
         .catch((error) => {
           console.log(error.message);
@@ -53,7 +67,9 @@ export default {
   },
   // nel mounthed utilizzo il metodo getApi a cui passo l'url per la prima pagina dei progetti
   mounted() {
-    this.getApi(store.apiUrl + "projects");
+    this.getApi(store.apiUrl + "projects", "projects");
+    this.getApi(store.apiUrl + "types", "types");
+    this.getApi(store.apiUrl + "technologies", "technologies");
   },
 };
 </script>
@@ -62,9 +78,26 @@ export default {
   <div class="container" v-if="!inLoading">
     <h1 v-if="projectNum > 0">Ci sono {{ projectNum }} progetti :</h1>
     <h1 v-else>"Non ci sono progetti disponibili !!!</h1>
-    <ul>
+    <!-- Sezione dei filtri per tipi e per tecnologie -->
+    <div class="card filters">
+      <div>
+        <div>Filtro per tipi di progetto:</div>
+        <!-- Filtro per i tipi di progetto -->
+        <button v-for="type in types" :key="type.id">
+          {{ type.name }}
+        </button>
+      </div>
+      <div>
+        <div>Filtro per tecnologie:</div>
+        <!-- Filtro per i tipi di progetto -->
+        <button v-for="technology in technologies" :key="technology.id">
+          {{ technology.name }}
+        </button>
+      </div>
+    </div>
+    <div>
       <!-- eseguo un ciclo v-for per stampare tutti i progetti in pagina -->
-      <li class="project" v-for="project in projects" :key="project.id">
+      <div class="card" v-for="project in projects" :key="project.id">
         <div>Progetto n. {{ project.id }}</div>
         <!-- nome del progetto -->
         <div>Nome del progetto: {{ project.name }}</div>
@@ -95,8 +128,8 @@ export default {
           </div>
         </div>
         <!-- ************************* -->
-      </li>
-    </ul>
+      </div>
+    </div>
 
     <!-- PAGINATOR -->
     <div class="paginator">
@@ -129,7 +162,7 @@ ul {
   list-style: none;
 }
 
-.project {
+.card {
   font-size: 20px;
   margin: 30px 0;
   background-color: #fff;
@@ -170,5 +203,10 @@ ul {
       box-shadow: rgba(0, 0, 0, 0.2) 0px 10px 30px;
     }
   }
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
