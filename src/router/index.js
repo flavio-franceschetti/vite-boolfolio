@@ -3,6 +3,7 @@ import Home from "../pages/Home.vue";
 import Projects from "../pages/Projects.vue";
 import About from "../pages/About.vue";
 import Error404 from "../pages/Error404.vue";
+import ProjectDetail from "../pages/ProjectDetail.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,6 +24,17 @@ const router = createRouter({
       path: "/about-me",
       name: "about-me",
       component: About,
+    },
+    {
+      // in vue per aggiungere un parametro dinamico si usa il bind con :parametro
+      path: "/dettagli/:slug",
+      name: "projectDetail",
+      component: ProjectDetail,
+    },
+    {
+      path: "/error404",
+      name: "error404",
+      component: Error404,
     },
     {
       // Questa "catch-all", per gestire errori 404, quando l'utente cerca di accedere a una route che non esiste

@@ -1,10 +1,14 @@
 <script>
 // importo store per recuperare l'apiUrl
 import { store } from "../store/store";
+// importo luxon per formattare le date
 import { DateTime } from "luxon";
+// importo le funzioni che mi servono che ho raggruppato su un file esterno per avere un codice più pulito
+import { customLabel, getTechnologies } from "../data/utils";
 
 // importo axios per effettuare la richiesta
 import axios from "axios";
+// import ProjectDetail from "./ProjectDetail.vue";
 export default {
   name: "Projects",
   data() {
@@ -19,6 +23,10 @@ export default {
       },
       projectNum: 0,
       inLoading: true,
+
+      // inserisco le funzioni importate da utils nei data per poterle utilizzare nel mio template le scrivo senza parametri perché sono impliciti e non cìè bisongno di specificarli
+      customLabel,
+      getTechnologies,
     };
   },
   methods: {
@@ -47,7 +55,7 @@ export default {
                 if (project.created_at) {
                   project.created_at = DateTime.fromISO(project.created_at)
                     .setLocale("it")
-                    .toFormat("dd LL yyyy");
+                    .toFormat("dd/LL/yyyy");
                   return project;
                 }
               });
@@ -65,24 +73,6 @@ export default {
         .catch((error) => {
           console.log(error.message);
         });
-    },
-    // funzione per modificare i nomi dei bottoni di default
-    customLabel(label) {
-      if (label == "&laquo; Previous") {
-        return (label = "&larr;");
-      } else if (label == "Next &raquo;") {
-        return (label = "&rarr;");
-      } else {
-        return label;
-      }
-    },
-
-    // funzione per controllo sulle tecnologie
-    getTechnologies(project) {
-      if (project.technologies.length) {
-        return project.technologies.map((tech) => tech.name).join(", ");
-      }
-      return "Nessuna tecnologia utilizzata";
     },
   },
   // nel mounthed utilizzo il metodo getApi a cui passo l'url per la prima pagina dei progetti
@@ -133,7 +123,17 @@ export default {
           }}
         </div>
         <!-- controllo sulle tecnologie utilizzate -->
-        <div>Tecnologie utilizzate: {{ getTechnologies(project) }}</div>
+        <div class="show">
+          <div>Tecnologie utilizzate: {{ getTechnologies(project) }}</div>
+          <span>
+            <router-link
+              :to="{ name: 'projectDetail', params: { slug: project.slug } }"
+              ><img
+                src="../../public/wired-outline-243-glasses-eye-blink-hover-searching.gif"
+                alt="eye"
+              /> </router-link
+          ></span>
+        </div>
         <!-- ************************* -->
       </div>
     </div>
@@ -161,21 +161,17 @@ export default {
   padding: 40px 0;
 }
 
+.filters {
+  display: flex;
+  justify-content: space-between;
+}
+
 h1 {
   font-size: 35px;
 }
 
 ul {
   list-style: none;
-}
-
-.card {
-  font-size: 20px;
-  margin: 30px 0;
-  background-color: #fff;
-  padding: 15px;
-  border-radius: 20px;
-  box-shadow: rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 
 .project-by {
@@ -192,6 +188,31 @@ ul {
   align-items: center;
   span {
     align-self: flex-end;
+  }
+}
+
+.show {
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+
+  div {
+    text-align: center;
+  }
+
+  a {
+    display: block;
+    width: 30px;
+    height: 30px;
+    transition: all 0.5s;
+    &:hover {
+      scale: 1.3;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 
@@ -219,10 +240,5 @@ ul {
       box-shadow: rgba(0, 0, 0, 0.2) 0px 10px 30px;
     }
   }
-}
-
-.filters {
-  display: flex;
-  justify-content: space-between;
 }
 </style>
